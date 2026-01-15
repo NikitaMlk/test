@@ -7,6 +7,7 @@ export default function Home() {
   const [reply, setReply] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [tone, setTone] = useState("friendly");
 
   async function sendMessage() {
     if (!message.trim()) return;
@@ -21,7 +22,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({ message, tone }),
       });
 
       const data = await response.json();
@@ -41,6 +42,12 @@ export default function Home() {
   return (
     <main style={{ maxWidth: 600, margin: "40px auto", padding: 20 }}>
       <h1>AI Playground</h1>
+
+      <select value={tone} onChange={(e) => setTone(e.target.value)}>
+        <option value="friendly">Friendly</option>
+        <option value="professional">Professional</option>
+        <option value="simple">Simple</option>
+      </select>
 
       <textarea
         value={message}

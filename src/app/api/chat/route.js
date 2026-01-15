@@ -8,7 +8,8 @@ const client = new OpenAI({
 
 export async function POST(req) {
   try {
-    const { message } = await req.json();
+    const { message, tone } = await req.json();
+    const userPrompt = `Respond in a ${tone} tone.\n\nUser message: ${message}`;
 
     if (!message) {
       return NextResponse.json(
@@ -17,14 +18,21 @@ export async function POST(req) {
       );
     }
 
+    if (!tone) {
+      return NextResponse.json(
+        { error: "Tone is required" },
+        { status: 400 }
+      );
+    }
+
     const response = await client.chat.completions.create({
       model: "openai/gpt-4o",
       messages: [
-        { role: "system", content: "You are a helpful AI assistant." },
+        { role: "system", content: userPrompt },
         { role: "user", content: message },
       ],
       temperature: 0.7,
-      max_tokens: 1024,
+      max_tokens: 100,
     });
 
     const reply =
